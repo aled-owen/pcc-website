@@ -1,0 +1,36 @@
+.nav-bar-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+}
+
+.primary-logo {
+	height: 75px;
+	padding: 10px;
+}
+
+.primary-nav ul {
+	display: flex;
+	list-style: none;
+	margin: 0;
+	border: 0;
+	padding: 0;
+	gap: 20px;
+}
+
+.primary-nav li {
+	padding: 10px;
+}
+
+.primary-nav a {
+	color: #ffffff;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.primary-nav a:hover,
+.primary-nav a:focus-visible {
+	color: #cdcdcd;
+}
