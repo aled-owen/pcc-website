@@ -1,0 +1,31 @@
+name: Publish to Cloudflare Pages
+description: Deploys the static site to Cloudflare Pages.
+
+inputs:
+  cloudflare-api-token:
+    description: Cloudflare API token with Pages write permission.
+    required: true
+  cloudflare-account-id:
+    description: Cloudflare account ID.
+    required: true
+  project-name:
+    description: Cloudflare Pages project name.
+    required: true
+  branch-name:
+    description: Branch to deploy too.
+    required: true
+  github-token:
+    description: GitHub token used to post deployment status on pull requests.
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Deploy to Cloudflare Pages
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ inputs.cloudflare-api-token }}
+        accountId: ${{ inputs.cloudflare-account-id }}
+        command: pages deploy ./site/ --project-name=${{ inputs.project-name }} --branch ${{ inputs.branch-name}}
+        # Optional: Enable this if you want to have GitHub Deployments triggered
+        gitHubToken: ${{ inputs.github-token }}
