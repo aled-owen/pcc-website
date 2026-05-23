@@ -1,0 +1,7 @@
+name: Run pre-commit
+description: Runs pre-commit hooks (Biome check) against all files.
+
+runs:
+  using: composite
+  steps:
+    - uses: pre-commit/action@v3.0.1
