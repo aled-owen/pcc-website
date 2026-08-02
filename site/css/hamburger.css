@@ -1,0 +1,195 @@
+/*
+	Accessible, CSS-only hamburger menu — MOBILE ONLY.
+
+	The mechanism (no JavaScript):
+	  <input type="checkbox" id="menu-btn">  ← the real, keyboard-operable toggle
+	  <label for="menu-btn">                 ← the visible hamburger icon
+	  <ul class="nav-list">                  ← the menu it reveals
+
+	These three elements are siblings inside <nav class="primary-nav">, so the
+	general-sibling combinator (`~`) lets `.menu-btn:checked` restyle both the
+	label (bars → X) and the list (collapsed → revealed).
+
+	Accessibility notes:
+	  - On mobile the checkbox is VISUALLY hidden but stays in the DOM,
+	    tab order and accessibility tree (we clip it rather than using
+	    display:none), so keyboard and screen-reader users can still operate it.
+	    Its checked/unchecked state is what tells them the menu is open/closed.
+	  - On desktop the whole toggle is display:none, so it never clutters the
+	    accessibility tree there — the full nav row (see nav.css) is shown instead.
+	  - When the menu is closed on mobile the list is `visibility: hidden`, which
+	    removes the links from the tab order so keyboard users can't tab into an
+	    invisible menu.
+*/
+
+/*
+	DESKTOP DEFAULT
+	Hide the whole toggle. nav.css already lays the links out as an inline row,
+	so no hamburger is needed above the mobile breakpoint.
+*/
+.menu-btn,
+.menu-btn-label {
+	display: none;
+}
+
+@media screen and (max-width: 700px) {
+	/*
+		Anchor the dropdown to the nav bar so it can drop directly beneath it.
+	*/
+	.nav-bar-content {
+		position: relative;
+	}
+
+	/*
+		The checkbox: visually hidden, but NOT removed from the page.
+		This is the standard "visually hidden" clip pattern — the control keeps
+		its keyboard focusability and its place in the accessibility tree, unlike
+		display:none / visibility:hidden. The styled <label> stands in for it.
+	*/
+	.menu-btn {
+		display: block;
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		border: 0;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	/*
+		The visible hamburger button. Padding gives it a comfortable ~44px tap
+		target (WCAG target-size guidance).
+	*/
+	.menu-btn-label {
+		display: block;
+		padding: 12px;
+		cursor: pointer;
+	}
+
+	/*
+		The three bars. The middle bar is the <span> itself; the top and bottom
+		bars are its ::before / ::after pseudo-elements, offset above and below.
+	*/
+	.menu-btn-bars {
+		position: relative;
+	}
+
+	.menu-btn-bars,
+	.menu-btn-bars::before,
+	.menu-btn-bars::after {
+		display: block;
+		width: 26px;
+		height: 3px;
+		background-color: #ffffff;
+		border-radius: 2px;
+		transition: transform 0.3s ease, background-color 0.3s ease, top 0.3s ease;
+	}
+
+	.menu-btn-bars::before,
+	.menu-btn-bars::after {
+		content: "";
+		position: absolute;
+		left: 0;
+	}
+
+	.menu-btn-bars::before {
+		top: -8px;
+	}
+
+	.menu-btn-bars::after {
+		top: 8px;
+	}
+
+	/*
+		Give the hamburger a clearly visible focus ring when the (clipped)
+		checkbox is focused by keyboard. The label immediately follows the input
+		in the DOM, so the adjacent-sibling combinator (`+`) targets it.
+	*/
+	.menu-btn:focus-visible + .menu-btn-label .menu-btn-bars,
+	.menu-btn:focus-visible + .menu-btn-label {
+		outline: 3px solid #ffffff;
+		outline-offset: 4px;
+		border-radius: 2px;
+	}
+
+	/*
+		OPEN STATE — morph the bars into an X.
+		Middle bar fades out; top/bottom bars move to the centre and cross over.
+	*/
+	.menu-btn:checked + .menu-btn-label .menu-btn-bars {
+		background-color: transparent;
+	}
+
+	.menu-btn:checked + .menu-btn-label .menu-btn-bars::before {
+		top: 0;
+		transform: rotate(45deg);
+	}
+
+	.menu-btn:checked + .menu-btn-label .menu-btn-bars::after {
+		top: 0;
+		transform: rotate(-45deg);
+	}
+
+	/*
+		The menu list. Closed by default: stacked, collapsed to zero height, and
+		visibility:hidden so its links are out of the tab order. It drops beneath
+		the nav bar as a full-width overlay rather than pushing the page down.
+
+		The `visibility` transition is delayed until the height animation
+		finishes when closing (so the links stay visible while collapsing), then
+		applied instantly when opening.
+	*/
+	.primary-nav .nav-list {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		z-index: 10;
+
+		flex-direction: column;
+		gap: 0;
+
+		max-height: 0;
+		overflow: hidden;
+		visibility: hidden;
+
+		background-color: #00a3cd;
+		transition: max-height 0.3s ease, visibility 0s linear 0.3s;
+	}
+
+	/*
+		OPEN STATE — reveal the list. max-height is an upper bound large enough
+		to fit the links (we can't transition to `auto`); visibility flips on
+		immediately so the links become focusable as the menu opens.
+	*/
+	.menu-btn:checked ~ .nav-list {
+		max-height: 400px;
+		visibility: visible;
+		transition: max-height 0.3s ease, visibility 0s;
+	}
+
+	.primary-nav .nav-list li {
+		width: 100%;
+	}
+
+	.primary-nav .nav-list a {
+		display: block;
+		padding: 6px 0;
+	}
+}
+
+/*
+	Honour users who prefer reduced motion: drop the open/close animations and
+	the bar transforms, but keep every state change functional.
+*/
+@media (prefers-reduced-motion: reduce) {
+	.menu-btn-bars,
+	.menu-btn-bars::before,
+	.menu-btn-bars::after,
+	.primary-nav .nav-list {
+		transition: none;
+	}
+}

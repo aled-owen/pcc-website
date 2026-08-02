@@ -14,7 +14,37 @@
 				<div class="nav-bar-content">
 					<img src="images/pcc_inverted_logo.png" alt="Pembrokeshire Climbing Club logo." class="primary-logo">
 					<nav class="primary-nav">
+						<!--
+							Accessible CSS-only hamburger menu (mobile only).
+
+							How it works:
+							1. The checkbox below is the real toggle: it is a genuine
+							   form control, so it is keyboard-operable (Space) and
+							   exposed to assistive tech. On mobile it is visually
+							   hidden but kept in the accessibility tree; on desktop
+							   it is hidden entirely. See hamburger.css.
+							2. The <label> is tied to the checkbox by for="menu-btn",
+							   so clicking/pressing it toggles the checkbox. The label
+							   draws the three-bar icon (and morphs it into an X when
+							   open).
+							3. CSS reacts to `.menu-btn:checked` to reveal the sibling
+							   <ul> — no JavaScript.
+
+							The visually-hidden "Menu" text names the checkbox for
+							screen readers; its checked/unchecked state signals whether
+							the menu is open or closed.
+						-->
+						<input type="checkbox" id="menu-btn" class="menu-btn">
+						<label for="menu-btn" class="menu-btn-label">
+							<span class="menu-btn-bars" aria-hidden="true"></span>
+							<span class="sr-only">Menu</span>
+						</label>
+
 						<ul class="nav-list">
+							<li><a href="index.html" aria-current="page">Home</a></li>
+							<li><a href="join_us.html">Join Us</a></li>
+							<li><a href="members.html">Members</a></li>
+							<li><a href="contact_us.html">Contact Us</a></li>
 						</ul>
 					</nav>
 				</div>
