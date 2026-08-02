@@ -31,4 +31,28 @@
 	main {
 		padding-inline: 1rem;
 	}
+
+	/*
+		On narrow screens the footer is too tight for the BMC badge to sit beside
+		the copyright, so stack the badge ABOVE the text instead. Bottom-align the
+		copyright so the badge can overlap just the top of the footer (keeping the
+		spill-over effect) without covering the text.
+	*/
+	footer {
+		align-items: flex-end;
+		padding-bottom: 2px;
+	}
+
+	.bmc-link {
+		/* Centre the badge horizontally instead of insetting it from the right. */
+		left: 50%;
+		right: auto;
+		transform: translateX(-50%);
+		/*
+			Sit clear of the copyright (bottom-aligned, ~21px tall) while still
+			overlapping the footer's top ~12px, so the badge keeps spilling over
+			the content above.
+		*/
+		bottom: 28px;
+	}
 }
