@@ -75,48 +75,72 @@
 			<main>
 				<!-- Page context -->
 				<h1>Contact Us</h1>
-				<section>
-					<p>
-					The best way to contact the club is via the email 
-					<a href="mailto:pembrokeshireclimbingclub@gmail.com">pembrokeshireclimbingclub@gmail.com</a>.
-					</p>
-				</section>
+				<!--
+					Photo and text side by side on desktop, stacked on mobile — the same
+					.media-split component the Join Us page uses (components.css).
 
-				<section>
-					<p>
-						You can also see what has been going on in the club recently via
-						our Facebook and Instagram pages.
-					</p>
+					As there, the photo shows on the LEFT but is deliberately last in the
+					source: the CSS places it into the left column, which keeps the mobile
+					stack in reading order (contact details first, photo after) and stops a
+					screen reader meeting the image before the words it illustrates. Moving
+					this <img> above .media-split-text would break both.
+				-->
+				<div class="media-split">
+					<div class="media-split-text">
+						<section>
+							<p>
+							The best way to contact the club is via the email 
+							<a href="mailto:pembrokeshireclimbingclub@gmail.com">pembrokeshireclimbingclub@gmail.com</a>.
+							</p>
+						</section>
+
+						<section>
+							<p>
+								You can also see what has been going on in the club recently via
+								our Facebook and Instagram pages:
+							</p>
+
+							<!--
+								Marked up as a list rather than two loose links: a screen reader
+								announces "list, 2 items", so the icons can be counted and skipped
+								as a group instead of arriving as two unexplained images.
+
+								The links are icon-only, so the alt text — not any visible label —
+								is what names them. It says where the link goes, not what the
+								picture is ("...on Facebook", not "Facebook logo"), and carries the
+								same "(opens in a new tab)" warning as the BMC badge in the footer,
+								which these follow in opening externally.
+
+								width/height are the rendered size, and match the sources' square
+								aspect ratio, so the row does not reflow as the images load.
+							-->
+							<ul class="social-links">
+								<li>
+									<!-- TODO: point at the club's real Facebook page before this goes live. -->
+									<a href="https://www.facebook.com/Pembrokeshireclimbingclub/" rel="noopener noreferrer">
+										<img src="images/facebook.png" width="48" height="48" alt="Pembrokeshire Climbing Club on Facebook (opens in a new tab)">
+									</a>
+								</li>
+								<li>
+									<!-- TODO: point at the club's real Instagram page before this goes live. -->
+									<a href="https://www.instagram.com/pembsclimbingclub/" rel="noopener noreferrer">
+										<img src="images/instagram.png" width="48" height="48" alt="Pembrokeshire Climbing Club on Instagram (opens in a new tab)">
+									</a>
+								</li>
+							</ul>
+						</section>
+					</div>
 
 					<!--
-						Marked up as a list rather than two loose links: a screen reader
-						announces "list, 2 items", so the icons can be counted and skipped
-						as a group instead of arriving as two unexplained images.
-
-						The links are icon-only, so the alt text — not any visible label —
-						is what names them. It says where the link goes, not what the
-						picture is ("...on Facebook", not "Facebook logo"), and carries the
-						same "(opens in a new tab)" warning as the BMC badge in the footer,
-						which these follow in opening externally.
-
-						width/height are the rendered size, and match the sources' square
-						aspect ratio, so the row does not reflow as the images load.
+						width/height are the file's intrinsic pixel size (1536x2048), not a
+						request to render at that size - CSS overrides both. They give the
+						browser the aspect ratio up front so the column does not reflow once
+						the photo loads.
 					-->
-					<ul class="social-links">
-						<li>
-							<!-- TODO: point at the club's real Facebook page before this goes live. -->
-							<a href="#" target="_blank" rel="noopener noreferrer">
-								<img src="images/facebook.png" width="48" height="48" alt="Pembrokeshire Climbing Club on Facebook (opens in a new tab)">
-							</a>
-						</li>
-						<li>
-							<!-- TODO: point at the club's real Instagram page before this goes live. -->
-							<a href="#" target="_blank" rel="noopener noreferrer">
-								<img src="images/instagram.png" width="48" height="48" alt="Pembrokeshire Climbing Club on Instagram (opens in a new tab)">
-							</a>
-						</li>
-					</ul>
-				</section>
+					<img src="images/porthclais_belaying.jpeg" width="1536" height="2048"
+						alt="Two club members on the rocks above the sea at Porthclais, one holding the ropes running down the slab while the other coils a rope behind."
+						class="media-split-image">
+				</div>
 			</main>
 		</div>
 		<div class="footer">
