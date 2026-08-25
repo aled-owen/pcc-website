@@ -43,3 +43,125 @@
 	font-size: 3.5rem;
 	max-inline-size: 900px;
 }
+
+/*
+	Scroll container for .data-table.
+
+	A table cannot be reflowed the way prose can, so on a narrow screen the
+	choice is between squeezing the columns unreadably and letting the table
+	scroll sideways inside its own box. This does the latter, keeping the page
+	itself free of horizontal scroll.
+
+	tabindex="0" is required on the markup, not optional: a scrollable region
+	that is not focusable cannot be scrolled by keyboard alone. Pairing it with
+	role="region" and an accessible name is what stops that stray tab stop from
+	being an unlabelled mystery to a screen reader.
+*/
+.table-scroll {
+	overflow-x: auto;
+	margin-block: 1.5rem;
+}
+
+/*
+	No `width: 100%` here on purpose — the table sizes to its content so it
+	does not stretch to touch the right edge of the viewport on a wide screen.
+	min-width sets the point below which it scrolls rather than crushing the
+	columns; 22rem keeps all but the very smallest phones scroll-free.
+*/
+.data-table {
+	border-collapse: collapse;
+	min-width: 22rem;
+}
+
+.data-table th,
+.data-table td {
+	padding: 10px 12px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.data-table tbody th {
+	white-space: nowrap;
+}
+
+/* Stop a long note column from dragging the table out across a wide screen. */
+.data-table td:last-child {
+	max-width: 28rem;
+}
+
+/*
+	Text-and-photo band: two columns on desktop, stacked at the mobile
+	breakpoint (see responsive.css).
+
+	`minmax(0, 1fr)` rather than a bare `1fr` for the text: a grid track's
+	default minimum is min-content, so a long unbreakable string in the prose
+	(an email address, a URL) would push the column past its share and squeeze
+	the photo. The 0 minimum lets the text wrap instead.
+
+	The photo column is sized in `rem` rather than a fraction so it stays a
+	sensible size for a portrait image at any content width — on a wide screen
+	a fractional track would blow it up to fill half the page.
+
+	align-items: start stops the shorter column being stretched to match the
+	taller one, which on the image would distort it.
+*/
+.media-split {
+	display: grid;
+	grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+	gap: 2rem;
+	align-items: start;
+	margin-block: 1.5rem;
+}
+
+/*
+	The photo takes the left column while staying AFTER the prose in the source.
+	Placing the two explicitly, rather than reordering the markup, keeps the
+	mobile stack in reading order — intro, benefits, then photo — and stops a
+	screen reader meeting the image before the words it illustrates.
+
+	Both need a placement: pinning only the image would leave the text to flow
+	into the first free cell and land in the wrong track. responsive.css
+	releases both at the breakpoint.
+*/
+.media-split-text {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+/*
+	The intrinsic width/height attributes on the <img> would otherwise render
+	the photo at 1200x1600; width:100% hands sizing to the grid track and
+	height:auto keeps the aspect ratio the attributes established.
+*/
+.media-split-image {
+	grid-column: 1;
+	grid-row: 1;
+	width: 100%;
+	height: auto;
+}
+
+/*
+	Row of social links on the Contact Us page.
+
+	list-style/padding are cleared because the <ul> is here for its semantics
+	(see the markup comment) rather than for bullets and indentation.
+*/
+.social-links {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	list-style: none;
+	padding: 0;
+	margin-block: 1rem;
+}
+
+/*
+	The source PNGs are square but enormous — 2084px and 5000px — so a size has
+	to be imposed here; without it they would render at natural size and blow
+	the page apart. 48px doubles as a comfortable touch target, clearing the
+	44px WCAG 2.5.5 guidance with the 1rem gap keeping the two apart.
+*/
+.social-links img {
+	width: 48px;
+	height: 48px;
+}

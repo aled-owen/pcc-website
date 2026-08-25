@@ -81,6 +81,17 @@
 		copyright so the badge can overlap just the top of the footer (keeping the
 		spill-over effect) without covering the text.
 	*/
+	/*
+		Raise the badge so it sits clear of the copyright (bottom-aligned, ~21px
+		tall) while still overlapping the footer's top ~12px, keeping the spill-over
+		effect. Raising it also pushes it further into the content above, but the
+		clearance at the end of `main` (base.css) is derived from this token, so it
+		grows to match on its own.
+	*/
+	:root {
+		--bmc-badge-lift: 28px;
+	}
+
 	footer {
 		align-items: flex-end;
 		padding-bottom: 2px;
@@ -91,11 +102,36 @@
 		left: 50%;
 		right: auto;
 		transform: translateX(-50%);
-		/*
-			Sit clear of the copyright (bottom-aligned, ~21px tall) while still
-			overlapping the footer's top ~12px, so the badge keeps spilling over
-			the content above.
-		*/
-		bottom: 28px;
+	}
+
+	/*
+		Stack the text-and-photo band (see .media-split in components.css). A
+		single column makes the two children flow into rows in source order:
+		prose first, photo beneath it.
+
+		The photo is capped and centred rather than run full-bleed — it is
+		portrait (3:4), so at a phone's full width it would stand ~520px tall
+		and push everything after it below the fold.
+	*/
+	.media-split {
+		grid-template-columns: 1fr;
+		gap: 1.5rem;
+	}
+
+	/*
+		Release the desktop column placement so both children fall back to source
+		order — prose first, photo beneath. Without this reset they stay pinned to
+		row 1 and would be stacked on top of each other rather than after one
+		another.
+	*/
+	.media-split-text,
+	.media-split-image {
+		grid-column: auto;
+		grid-row: auto;
+	}
+
+	.media-split-image {
+		max-width: 20rem;
+		margin-inline: auto;
 	}
 }

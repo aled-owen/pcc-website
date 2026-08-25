@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+
+<head>
+	<meta charset="utf-8">
+	<!--
+		Opt out of the mobile browser default of laying the page out against a
+		~980px virtual viewport and scaling the result down. Without this the
+		responsive breakpoint (48em / 768px) never matches on a phone, so the
+		desktop grid and inline nav render and get shrunk to ~40% — the
+		hamburger menu never appears.
+
+		Deliberately no `maximum-scale` / `user-scalable=no`: those disable
+		pinch-zoom and fail WCAG 1.4.4.
+	-->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Contact Us — Pembrokeshire Climbing Club</title>
+	<link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="nav-bar">
+			<header>
+				<div class="nav-bar-content">
+					<img src="images/pcc_inverted_logo.png" alt="Pembrokeshire Climbing Club logo." class="primary-logo">
+					<nav class="primary-nav">
+						<!--
+							Accessible CSS-only hamburger menu (mobile only).
+
+							How it works:
+							1. The checkbox below is the real toggle: it is a genuine
+							   form control, so it is keyboard-operable (Space) and
+							   exposed to assistive tech. On mobile it is visually
+							   hidden but kept in the accessibility tree; on desktop
+							   it is hidden entirely. See hamburger.css.
+							2. The <label> is tied to the checkbox by for="menu-btn",
+							   so clicking/pressing it toggles the checkbox. The label
+							   draws the three-bar icon (and morphs it into an X when
+							   open).
+							3. CSS reacts to `.menu-btn:checked` to reveal the sibling
+							   <ul> — no JavaScript.
+
+							The visually-hidden "Menu" text names the checkbox for
+							screen readers; its checked/unchecked state signals whether
+							the menu is open or closed.
+						-->
+						<input type="checkbox" id="menu-btn" class="menu-btn">
+						<label for="menu-btn" class="menu-btn-label">
+							<span class="menu-btn-bars" aria-hidden="true"></span>
+							<span class="sr-only">Menu</span>
+						</label>
+
+						<ul class="nav-list">
+							<li><a href="index.html">Home</a></li>
+							<li><a href="join_us.html">Join Us</a></li>
+							<li><a href="members.html">Members</a></li>
+							<li><a href="contact_us.html" aria-current="page">Contact Us</a></li>
+						</ul>
+					</nav>
+				</div>
+			</header>
+		</div>
+
+		<div class="lhs-border">
+			<!-- empty for styling -->
+			<div class="cliff-edge">
+			</div>
+			<div class="border-climber">
+			</div>
+		</div>
+
+		<div class="main-content">
+			<main>
+				<!-- Page context -->
+				<h1>Contact Us</h1>
+				<section>
+					<p>
+					The best way to contact the club is via the email 
+					<a href="mailto:pembrokeshireclimbingclub@gmail.com">pembrokeshireclimbingclub@gmail.com</a>.
+					</p>
+				</section>
+
+				<section>
+					<p>
+						You can also see what has been going on in the club recently via
+						our Facebook and Instagram pages.
+					</p>
+
+					<!--
+						Marked up as a list rather than two loose links: a screen reader
+						announces "list, 2 items", so the icons can be counted and skipped
+						as a group instead of arriving as two unexplained images.
+
+						The links are icon-only, so the alt text — not any visible label —
+						is what names them. It says where the link goes, not what the
+						picture is ("...on Facebook", not "Facebook logo"), and carries the
+						same "(opens in a new tab)" warning as the BMC badge in the footer,
+						which these follow in opening externally.
+
+						width/height are the rendered size, and match the sources' square
+						aspect ratio, so the row does not reflow as the images load.
+					-->
+					<ul class="social-links">
+						<li>
+							<!-- TODO: point at the club's real Facebook page before this goes live. -->
+							<a href="#" target="_blank" rel="noopener noreferrer">
+								<img src="images/facebook.png" width="48" height="48" alt="Pembrokeshire Climbing Club on Facebook (opens in a new tab)">
+							</a>
+						</li>
+						<li>
+							<!-- TODO: point at the club's real Instagram page before this goes live. -->
+							<a href="#" target="_blank" rel="noopener noreferrer">
+								<img src="images/instagram.png" width="48" height="48" alt="Pembrokeshire Climbing Club on Instagram (opens in a new tab)">
+							</a>
+						</li>
+					</ul>
+				</section>
+			</main>
+		</div>
+		<div class="footer">
+			<footer>
+				<!-- Leaving for copyright and structure going forward -->
+				&copy; 2026 Pembrokeshire Climbing Club
+				<!--
+					BMC associate-member badge. Positioned (see .bmc-link in
+					base.css) so it sits at the bottom of the footer, inset a
+					couple of cm from the right, and spills up over the content.
+				-->
+				<!-- Begin Link to BMC -->
+				<a href="http://www.thebmc.co.uk/" class="bmc-link" target="_blank" rel="noopener noreferrer">
+					<img src="https://media-cdn.incrowdsports.com/767674b2-017a-455f-9ff9-52e06df4ed52.jpg" width="140" height="80" alt="BMC Associate Member (opens in a new tab)">
+				</a>
+				<!-- End Link to BMC -->
+			</footer>
+		</div>
+	</div>
+</body>
+
+</html>
