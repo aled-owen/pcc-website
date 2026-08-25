@@ -33,15 +33,23 @@ footer {
 }
 
 /*
-	BMC associate-member badge. Pinned to the bottom of the footer and inset a
+	BMC associate-member badge. Sits near the bottom of the footer, inset a
 	couple of centimetres from the right edge. Because the badge (80px) is
 	taller than the footer (40px), the rest spills upward, floating over the
 	content above.
+
+	Lifted 8px off the footer's bottom edge rather than flush to it, so a strip
+	of the grey footer background stays visible beneath the badge and it reads
+	as sitting ON the footer rather than hanging off it. 8px of the 40px footer
+	leaves the badge still overlapping the other 32px.
+
+	Mobile overrides this (see responsive.css) — there the badge is centred and
+	raised further to clear the bottom-aligned copyright.
 */
 .bmc-link {
 	position: absolute;
 	right: 2cm;
-	bottom: 0;
+	bottom: 8px;
 	z-index: 5;
 	line-height: 0;
 }

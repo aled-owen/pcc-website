@@ -1,4 +1,24 @@
-@media screen and (max-width: 700px) {
+/*
+	MOBILE BREAKPOINT — 48em (768px at the default 16px font size).
+
+	Why 48em and not a px value: most of what forces the switch is text, which
+	scales with the user's browser font size. The desktop nav row needs ~661px
+	(244px logo + ~417px of links), but at a 20px default that grows to ~764px —
+	a hard-coded px breakpoint would leave those users colliding while still in
+	the desktop layout. `em` in a media query is always measured against the
+	browser default (a :root font-size can't affect it), so the breakpoint moves
+	out with the content it protects.
+
+	Why 48em specifically: the binding constraint is the FOOTER, not the nav.
+	The BMC badge is pinned `right: 2cm` (75.6px) and is 140px wide, so it
+	overlaps the centred copyright (~298px) below ~729px. 48em clears that with
+	room to spare, and lands on the iPad-portrait boundary — reasonable, since
+	at that width the desktop nav has little slack and the 75px .lhs-border
+	column is still eating into the content.
+
+	Keep this value in sync with hamburger.css.
+*/
+@media screen and (max-width: 48em) {
 	.wrapper {
 		grid-template-areas:
 			"header"

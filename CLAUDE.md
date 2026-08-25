@@ -29,7 +29,7 @@ iac/           Terraform for Cloudflare Pages infrastructure
 
 ### Page Layout
 
-Every page uses a CSS Grid layout defined on `.wrapper` with three named areas: `header` (nav bar), `border` (left decorative column), and `content` (main body), plus `footer`. On mobile (`max-width: 700px`) the grid collapses to a single column and the border column is hidden with `display: none`.
+Every page uses a CSS Grid layout defined on `.wrapper` with three named areas: `header` (nav bar), `border` (left decorative column), and `content` (main body), plus `footer`. On mobile (`max-width: 48em`) the grid collapses to a single column and the border column is hidden with `display: none`.
 
 ### CSS Files (`site/css/`)
 
@@ -41,7 +41,7 @@ Every page uses a CSS Grid layout defined on `.wrapper` with three named areas: 
 | `nav.css` | Nav bar, links (desktop inline row) |
 | `hamburger.css` | CSS-only hamburger toggle — mobile only |
 | `components.css` | Decorative border images, splash image |
-| `responsive.css` | All mobile overrides (`max-width: 700px`) |
+| `responsive.css` | All mobile overrides (`max-width: 48em`) |
 
 ### Splash Image Overlay
 
@@ -49,7 +49,7 @@ Every page uses a CSS Grid layout defined on `.wrapper` with three named areas: 
 
 ### CSS-only Hamburger Menu (`hamburger.css`)
 
-The nav toggle is **mobile-only** (`max-width: 700px`); desktop shows the links as an inline row. It uses no JavaScript: an `<input type="checkbox" id="menu-btn">` paired with a `<label for="menu-btn">` (the visible bars icon). The checkbox, label and `.nav-list` are siblings inside `.primary-nav`, so `.menu-btn:checked` restyles both — morphing the bars into an X and revealing the list, which drops beneath the bar as a full-width overlay via a `max-height` transition.
+The nav toggle is **mobile-only** (`max-width: 48em`); desktop shows the links as an inline row. It uses no JavaScript: an `<input type="checkbox" id="menu-btn">` paired with a `<label for="menu-btn">` (the visible bars icon). The checkbox, label and `.nav-list` are siblings inside `.primary-nav`, so `.menu-btn:checked` restyles both — morphing the bars into an X and revealing the list, which drops beneath the bar as a full-width overlay via a `max-height` transition.
 
 Accessibility details:
 - On mobile the checkbox is *visually hidden but kept in the accessibility tree / tab order* (clipped, not `display:none`), so it stays keyboard-operable; on desktop the whole toggle is `display:none`.

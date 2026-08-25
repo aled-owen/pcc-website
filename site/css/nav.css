@@ -3,7 +3,20 @@
 	justify-content: space-between;
 	align-items: center;
 	margin: 0;
-	padding: 0;
+	/*
+		Horizontal gutter only — matches `main`'s mobile padding-inline. The row
+		must stay exactly 75px tall to fill the header grid track (see
+		layout.css), so never add vertical padding here.
+
+		The logo and the nav <li>s each carry their own 10px, so this sets the
+		graphic and the links ~26px off the viewport edge rather than 10px.
+
+		Safe for the mobile dropdown: .nav-list is absolutely positioned against
+		this element's padding box, which (with no border) is its full border-box
+		width — so `left: 0; right: 0` still spans edge to edge.
+	*/
+	padding-inline: 1rem;
+	padding-block: 0;
 }
 
 .primary-logo {

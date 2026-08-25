@@ -32,7 +32,8 @@
 	display: none;
 }
 
-@media screen and (max-width: 700px) {
+/* Mobile breakpoint — see the note in responsive.css. Keep the two in sync. */
+@media screen and (max-width: 48em) {
 	/*
 		Anchor the dropdown to the nav bar so it can drop directly beneath it.
 	*/
@@ -85,7 +86,10 @@
 		height: 3px;
 		background-color: #ffffff;
 		border-radius: 2px;
-		transition: transform 0.3s ease, background-color 0.3s ease, top 0.3s ease;
+		transition:
+			transform 0.3s ease,
+			background-color 0.3s ease,
+			top 0.3s ease;
 	}
 
 	.menu-btn-bars::before,
@@ -157,7 +161,9 @@
 		visibility: hidden;
 
 		background-color: #00a3cd;
-		transition: max-height 0.3s ease, visibility 0s linear 0.3s;
+		transition:
+			max-height 0.3s ease,
+			visibility 0s linear 0.3s;
 	}
 
 	/*
@@ -168,7 +174,9 @@
 	.menu-btn:checked ~ .nav-list {
 		max-height: 400px;
 		visibility: visible;
-		transition: max-height 0.3s ease, visibility 0s;
+		transition:
+			max-height 0.3s ease,
+			visibility 0s;
 	}
 
 	.primary-nav .nav-list li {
