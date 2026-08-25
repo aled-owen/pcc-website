@@ -1,8 +1,20 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en-GB">
 
 <head>
+	<meta charset="utf-8">
+	<!--
+		Opt out of the mobile browser default of laying the page out against a
+		~980px virtual viewport and scaling the result down. Without this the
+		responsive breakpoint (48em / 768px) never matches on a phone, so the
+		desktop grid and inline nav render and get shrunk to ~40% — the
+		hamburger menu never appears.
+
+		Deliberately no `maximum-scale` / `user-scalable=no`: those disable
+		pinch-zoom and fail WCAG 1.4.4.
+	-->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Pembrokeshire Climbing Club</title>
 	<link href="css/style.css" rel="stylesheet">
 </head>
@@ -78,11 +90,13 @@
 				<!-- Homepage context -->
 				<section>
 					<p>
-						We are currently updating our website.
+						We are a BMC affiliated
+						climbing club based in and around pembrokeshire, organising regular meets in
+						the north and south of the county.
 					</p>
 
 					<p>
-						Please email any enquiries to <a href="mailto:pembrokeshireclimbingclub@gmail.com">pembrokeshireclimbingclub@gmail.com</a>.
+						If you're interested in joining the club, please see the details provided on the <a href="join_us.html"> join us </a> page.
 					</p>
 				</section>
 			</main>
