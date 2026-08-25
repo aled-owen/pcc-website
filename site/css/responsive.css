@@ -37,6 +37,29 @@
 		height: fit-content;
 	}
 
+	/*
+		Stop the logo crowding the hamburger on the narrowest phones.
+
+		At its desktop size the logo is 244px wide — that is not a free choice,
+		it falls out of `height: 75px` in nav.css: 75px box - 20px padding =
+		55px of image, and the source is 949x233 (ratio ~4.07), so 55 * 4.07 =
+		224px of image + 20px padding = 244px.
+
+		On a 320px screen that leaves 244 + 32 (nav gutter) + 50 (hamburger) =
+		326px of content in a 320px viewport, which overflows and produces a
+		sliver of horizontal scroll.
+
+		`min()` keeps the natural 244px wherever it fits and falls back to 60vw
+		below ~407px, so only genuinely small phones see any change (390px ->
+		234px, a 4% trim). `height: auto` is required alongside it: capping the
+		width while nav.css still fixes the height would squash the image.
+		Nothing is needed on desktop, where the breakpoint guarantees >= 768px.
+	*/
+	.primary-logo {
+		width: min(244px, 60vw);
+		height: auto;
+	}
+
 	.index-splash-image {
 		background-image:
 			linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
