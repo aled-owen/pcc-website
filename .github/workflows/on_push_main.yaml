@@ -1,23 +1,22 @@
-name: PR
+name: Main
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+  # Manual re-deploy, e.g. to recover after a failed run without an empty commit.
+  workflow_dispatch:
 
 permissions:
   contents: read
   deployments: write
-  pull-requests: write
+
+# A newer commit on main supersedes an in-flight deploy of an older one.
+concurrency:
+  group: publish-production
+  cancel-in-progress: true
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ./.github/actions/run-precommit
-
-  publish-preview:
+  publish:
     runs-on: ubuntu-latest
     # Supplies CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID, both written and
     # rotated by .github/workflows/rotate_cloudflare_token.yaml.
@@ -29,6 +28,7 @@ jobs:
         with:
           cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          branch-name: ${{ github.head_ref }}
           project-name: pcc-website
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Must match the Pages project's production_branch (iac/deploy_site),
+          # otherwise wrangler files the upload as a preview, not production.
+          branch-name: main

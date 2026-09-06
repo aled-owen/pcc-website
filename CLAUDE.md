@@ -75,19 +75,43 @@ Accessibility details:
 
 ## CI/CD
 
-Two workflows, both calling shared composite actions in `.github/actions/`:
+Three workflows; the deploy workflows call shared composite actions in `.github/actions/`:
 
 | Workflow | Trigger | Jobs |
 |---|---|---|
 | `on_pr.yaml` | Pull request opened/updated | `lint` (pre-commit) + `publish-preview` (Cloudflare preview) |
-| `on_release.yaml` | Release published | `publish` (Cloudflare production) |
+| `on_push_main.yaml` | Push to `main` + manual | `publish` (Cloudflare production) |
+| `rotate_cloudflare_token.yaml` | Daily cron + manual | `rotate` (applies `iac/deploy_token`) |
 
-Deployment uses `cloudflare/wrangler-action@v3`. Required repository secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+Deployment uses `cloudflare/wrangler-action@v3` against a direct-upload Pages project — Cloudflare's Git integration is deliberately not used, so the deploy trigger lives in GitHub Actions. Both deploy jobs declare `environment: cloudflare-pages` and read `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` from that environment, not from repository secrets.
+
+The rotation job runs under the separate `cloudflare-token-rotation` environment, which holds the bootstrap credentials (`TF_CLOUDFLARE_API_TOKEN`, `TF_GITHUB_TOKEN`, `TF_STATE_ACCESS_KEY_ID`, `TF_STATE_SECRET_ACCESS_KEY`, `CLOUDFLARE_ACCOUNT_ID`) plus the repository variable `TF_STATE_BUCKET`. Those credentials mint tokens and are rotated by hand.
 
 ## Infrastructure (`iac/`)
 
-Terraform with the Cloudflare provider (`~> 4.0`) manages the Cloudflare Pages project. Key variables: `cloudflare_api_token`, `cloudflare_account_id`, `project_name` (default: `pcc-website`), `production_branch` (default: `main`).
+Two Terraform root modules, both on the Cloudflare provider `~> 5.19`.
+
+### `deploy_site/`
+
+Manages the Cloudflare Pages project and its custom domain. Local state. Variables: `cloudflare_account_id`, `project_name` (default: `pcc-website`), `production_branch` (default: `main`).
+
+The project has no `source` block, which is deliberate — it is a direct-upload project, so `on_push_main.yaml` owns the deploy trigger and uploads `site/` with wrangler. Adding a `source` block would hand the trigger to Cloudflare's Git integration and leave the rotating token unused.
+
+`production_branch` is load-bearing for the deploy: wrangler only files an upload as a production deployment when its `--branch` matches this value. `on_push_main.yaml` passes `main` literally, and `outputs.tf` exposes `project_name` / `production_branch` so those literals have a documented source.
 
 ```
-cd iac && terraform init && terraform apply
+cd iac/deploy_site && terraform init && terraform apply
 ```
+
+### `deploy_token/`
+
+Issues the Pages deploy token, writes it to the `cloudflare-pages` GitHub environment, and rotates it. Remote state in Cloudflare R2 via the S3 backend (`bucket` passed at init, endpoint from `AWS_ENDPOINT_URL_S3`) — local state would mint a new token every scheduled run.
+
+Rotation chain: `time_rotating` (rotation clock in state) → `cloudflare_account_token` → `github_actions_environment_secret`. Two lifecycle settings are load-bearing:
+
+- `replace_triggered_by = [time_rotating.deploy_token]` — a changed token `name` is only a PATCH, so without forced replacement the value never changes.
+- `create_before_destroy` — needs the rotation timestamp in the token name, since Cloudflare rejects duplicate token names.
+
+Permission groups are resolved by API name (`Pages Write`, not the dashboard's "Cloudflare Pages: Edit") through `cloudflare_account_api_token_permission_groups_list`, with a precondition that fails loudly on an unmatched name.
+
+Full bootstrap and operational notes: `iac/deploy_token/README.md`.

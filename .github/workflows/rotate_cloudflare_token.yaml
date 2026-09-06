@@ -1,0 +1,84 @@
+name: Rotate Cloudflare token
+
+on:
+  schedule:
+    # Daily. Most runs are a no-op — the token is only replaced once the
+    # rotation date recorded in Terraform state has passed — so running daily
+    # just means the rotation happens promptly and a failure is noticed early.
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Replace the token now instead of waiting for the rotation date
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Two applies against the same state would fight over the state lock.
+concurrency:
+  group: rotate-cloudflare-token
+  cancel-in-progress: false
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+
+    # Holds the bootstrap credentials. Deliberately a different environment from
+    # the one the issued token lands in — these are the credentials that mint
+    # tokens, and they are not themselves rotated by this workflow.
+    environment: cloudflare-token-rotation
+
+    defaults:
+      run:
+        working-directory: iac/deploy_token
+
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.TF_CLOUDFLARE_API_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_github_owner: ${{ github.repository_owner }}
+      # R2 state bucket, addressed through its S3-compatible API.
+      AWS_ACCESS_KEY_ID: ${{ secrets.TF_STATE_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_STATE_SECRET_ACCESS_KEY }}
+      AWS_ENDPOINT_URL_S3: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.16.1
+          # The wrapper rewrites stdout, which breaks `terraform output -raw`.
+          terraform_wrapper: false
+
+      - name: Resolve repository name
+        run: echo "TF_VAR_github_repository=${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
+
+      - name: Terraform init
+        run: |
+          terraform init \
+            -input=false \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
+
+      - name: Terraform apply
+        run: |
+          terraform apply \
+            -input=false \
+            -auto-approve \
+            -lock-timeout=5m \
+            ${{ inputs.force && '-replace=time_rotating.deploy_token' || '' }}
+
+      - name: Summary
+        run: |
+          {
+            echo "### Cloudflare deploy token"
+            echo
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| Token | \`$(terraform output -raw token_name)\` |"
+            echo "| Expires | $(terraform output -raw token_expires_on) |"
+            echo "| Next rotation due | $(terraform output -raw rotation_due) |"
+            echo "| Environment | \`$(terraform output -raw github_environment)\` |"
+          } >> "$GITHUB_STEP_SUMMARY"

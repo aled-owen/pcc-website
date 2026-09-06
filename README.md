@@ -12,15 +12,26 @@ Static website hosted on Cloudflare Pages.
 
 ## CI/CD
 
-Pull requests get a Cloudflare preview deployment. Publishing a release deploys
-to production.
+Pull requests get a Cloudflare preview deployment. Merging to `main` deploys
+`site/` to production. Both read `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID` from the `cloudflare-pages` GitHub Actions environment.
 
-Requires repository secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+A third workflow rotates that token on a schedule — see
+[`iac/deploy_token/`](iac/deploy_token/README.md).
 
 ## Infrastructure
 
+Two Terraform root modules:
+
+| Module | Manages | State |
+|---|---|---|
+| [`iac/deploy_site/`](iac/deploy_site) | Cloudflare Pages project and custom domain | Local |
+| [`iac/deploy_token/`](iac/deploy_token) | The rotating Pages deploy token and the GitHub environment holding it | Remote (R2) |
 
 ```sh
-cd iac && terraform init && terraform apply \
+cd iac/deploy_site && terraform init && terraform apply \
   -var="cloudflare_account_id=<account_id>"
 ```
+
+`deploy_token` is applied by CI on a schedule; its one-time bootstrap is
+documented in [its README](iac/deploy_token/README.md).
