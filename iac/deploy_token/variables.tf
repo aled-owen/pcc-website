@@ -67,7 +67,7 @@ variable "token_permission_groups" {
     rotate_cloudflare_token.yaml back at TF_CLOUDFLARE_API_TOKEN.
   EOT
   type        = list(string)
-  default     = ["Pages Write", "API Tokens Write"]
+  default     = ["Pages Write", "Account API Tokens Write"]
 
   validation {
     condition     = length(var.token_permission_groups) > 0

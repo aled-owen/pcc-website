@@ -21,8 +21,11 @@ locals {
     ])
   }
 
+  # Carries the match count, because zero and two are different problems: a
+  # wrong name versus a name Cloudflare uses at more than one scope.
   unresolved_permission_groups = [
-    for name, ids in local.permission_group_ids : name if length(ids) != 1
+    for name, ids in local.permission_group_ids :
+    "${name} (${length(ids)} matched)" if length(ids) != 1
   ]
 
   rotation_stamp = formatdate("YYYYMMDD-hhmmss", time_rotating.deploy_token.rfc3339)
@@ -74,7 +77,7 @@ resource "cloudflare_account_token" "pages_deploy" {
 
     precondition {
       condition     = length(local.unresolved_permission_groups) == 0
-      error_message = "No unique Cloudflare permission group matched: ${join(", ", local.unresolved_permission_groups)}. See the token_permission_groups variable for how to list the valid names."
+      error_message = "No unique Cloudflare permission group matched: ${join(", ", local.unresolved_permission_groups)}. 0 matched means the name is wrong; 2 or more means Cloudflare publishes it at several scopes and this module cannot tell them apart. See the token_permission_groups variable for how to list the valid names."
     }
   }
 }
