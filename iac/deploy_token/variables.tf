@@ -21,16 +21,6 @@ variable "github_environment" {
   default     = "cloudflare-pages"
 }
 
-variable "rotation_github_environment" {
-  description = <<-EOT
-    Environment the rotation workflow runs in. The issued token is written here
-    as well, because that workflow now authenticates with it rather than with
-    the bootstrap credential. Created by hand, not by Terraform.
-  EOT
-  type        = string
-  default     = "cloudflare-token-rotation"
-}
-
 variable "api_token_secret_name" {
   description = "Environment secret holding the issued Cloudflare token."
   type        = string
@@ -54,20 +44,23 @@ variable "token_permission_groups" {
     Cloudflare permission group names granted to the issued token. These are the
     API names, which differ from the dashboard labels — "Cloudflare Pages: Edit"
     in the dashboard is "Pages Write" here, and "Account API Tokens: Edit" is
-    "API Tokens Write". List the valid names with:
+    "Account API Tokens Write". List the valid names with:
 
       curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
         "https://api.cloudflare.com/client/v4/accounts/<account_id>/tokens/permission_groups"
 
-    "API Tokens Write" is what lets the token replace itself, and so what lets
-    the rotation workflow run on the issued credential instead of the bootstrap
-    one. It is also a genuine widening: this is the same value pull request
-    preview deploys use, so anything able to read the cloudflare-pages
-    environment can now mint account tokens. To undo, drop it and point
-    rotate_cloudflare_token.yaml back at TF_CLOUDFLARE_API_TOKEN.
+    Do not add a token-management group here in the hope of letting the rotation
+    workflow authenticate with the token this module issues. Cloudflare refuses
+    to mint it:
+
+      1001: sub-token is not allowed to have permissions to manage other tokens
+
+    A token created through the API by another token may never manage tokens
+    itself, and Terraform always authenticates as a token, so the rotation keeps
+    its own hand-made credential. See the README gotchas.
   EOT
   type        = list(string)
-  default     = ["Pages Write", "Account API Tokens Write"]
+  default     = ["Pages Write"]
 
   validation {
     condition     = length(var.token_permission_groups) > 0
