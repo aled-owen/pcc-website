@@ -22,3 +22,8 @@ output "github_environment" {
   description = "GitHub Actions environment holding the deploy credentials."
   value       = "${var.github_owner}/${var.github_repository}:${var.github_environment}"
 }
+
+output "rotation_github_environment" {
+  description = "GitHub Actions environment the rotation workflow reads the same token from."
+  value       = "${var.github_owner}/${var.github_repository}:${var.rotation_github_environment}"
+}

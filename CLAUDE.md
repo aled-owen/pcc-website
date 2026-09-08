@@ -85,7 +85,9 @@ Three workflows; the deploy workflows call shared composite actions in `.github/
 
 Deployment uses `cloudflare/wrangler-action@v3` against a direct-upload Pages project — Cloudflare's Git integration is deliberately not used, so the deploy trigger lives in GitHub Actions. Both deploy jobs declare `environment: cloudflare-pages` and read `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` from that environment, not from repository secrets.
 
-The rotation job runs under the separate `cloudflare-token-rotation` environment, which holds the bootstrap credentials (`TF_CLOUDFLARE_API_TOKEN`, `TF_GITHUB_TOKEN`, `TF_STATE_ACCESS_KEY_ID`, `TF_STATE_SECRET_ACCESS_KEY`, `CLOUDFLARE_ACCOUNT_ID`) plus the repository variable `TF_STATE_BUCKET`. Those credentials mint tokens and are rotated by hand.
+The rotation job runs under the separate `cloudflare-token-rotation` environment, which holds `TF_GITHUB_TOKEN`, `TF_STATE_ACCESS_KEY_ID`, `TF_STATE_SECRET_ACCESS_KEY`, `CLOUDFLARE_ACCOUNT_ID` and the break-glass `TF_CLOUDFLARE_API_TOKEN`, plus the repository variable `TF_STATE_BUCKET`. Those are rotated by hand.
+
+Cloudflare authentication for that job is the rotated token itself: Terraform writes `CLOUDFLARE_API_TOKEN` into this environment as well as `cloudflare-pages`, and the job reads it from there. `TF_CLOUDFLARE_API_TOKEN` is only reached via the workflow's `bootstrap` input — for the first apply, and to recover when the issued token is dead and cannot log in to replace itself.
 
 ## Infrastructure (`iac/`)
 
@@ -113,5 +115,7 @@ Rotation chain: `time_rotating` (rotation clock in state) → `cloudflare_accoun
 - `create_before_destroy` — needs the rotation timestamp in the token name, since Cloudflare rejects duplicate token names.
 
 Permission groups are resolved by API name (`Pages Write`, not the dashboard's "Cloudflare Pages: Edit") through `cloudflare_account_api_token_permission_groups_list`, with a precondition that fails loudly on an unmatched name.
+
+The issued token also carries `API Tokens Write` (the dashboard's "Account API Tokens: Edit"), which is what lets the rotation run on the token it manages — the apply mints the successor, updates both environment secrets, then revokes the credential it is authenticated with as its last call. A refused revocation fails the apply with the new token already live, and the next run cleans up the orphan. The cost is that the token used by PR preview deploys can mint account tokens; dropping the permission and pointing the workflow back at `TF_CLOUDFLARE_API_TOKEN` reverses it.
 
 Full bootstrap and operational notes: `iac/deploy_token/README.md`.

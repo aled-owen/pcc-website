@@ -30,6 +30,13 @@ locals {
 
 # Account-owned rather than user-owned, so the deploy credential survives any
 # one person leaving and is visible to every account admin.
+#
+# This token also mints its own successor: the rotation workflow authenticates
+# with it, so a replacement is created, written to both environments, and only
+# then is the old token revoked. The revocation is the one call made with a
+# credential that is about to stop existing — if Cloudflare refuses it the apply
+# fails *after* the new token is already in service, and the next run (now
+# holding the new token) destroys the leftover.
 resource "cloudflare_account_token" "pages_deploy" {
   account_id = var.cloudflare_account_id
 
@@ -89,4 +96,21 @@ resource "github_actions_environment_secret" "cloudflare_account_id" {
   environment = github_repository_environment.deploy.environment
   secret_name = var.account_id_secret_name
   value       = var.cloudflare_account_id
+}
+
+# The rotation workflow authenticates to Cloudflare with the very token managed
+# here, so the value has to be readable from the environment that workflow runs
+# in as well. TF_CLOUDFLARE_API_TOKEN stays alongside it as break-glass: it
+# seeds the first token carrying the token-minting permission, and recovers a
+# rotation that ended without a usable credential.
+#
+# Only the secret is managed, not the environment — the rotation environment is
+# created by hand (see README) and its branch protection is what keeps a pull
+# request branch away from these credentials. Terraform must not be able to
+# relax that.
+resource "github_actions_environment_secret" "rotation_cloudflare_api_token" {
+  repository  = var.github_repository
+  environment = var.rotation_github_environment
+  secret_name = var.api_token_secret_name
+  value       = cloudflare_account_token.pages_deploy.value
 }
