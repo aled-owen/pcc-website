@@ -42,3 +42,26 @@
 .splash-image-block {
 	height: 350px;
 }
+
+/*
+	Cap how wide page content grows on a wide screen. Two limits, because one
+	number can't serve both kinds of page:
+
+	- main (60rem) bounds the whole column, so the photo-and-text band and the
+	  fees table stay together rather than spreading across the screen.
+	- Its direct children (60ch) bound running text on pages without a photo.
+	  Arvo is a wide face, so 60ch comes out at ~75 characters a line, not 60.
+
+	.media-split and .table-scroll are left out of the second rule because
+	they size themselves (see components.css).
+
+	Left-aligned rather than centred, so the text stays against the cliff-edge
+	border instead of drifting away from it on a wide screen.
+*/
+main {
+	max-inline-size: 60rem;
+}
+
+main > :not(.media-split, .table-scroll) {
+	max-inline-size: 60ch;
+}
