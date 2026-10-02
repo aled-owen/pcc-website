@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   publish:
+    if: github.repository == 'pembsclimbingclub/pcc-website'
     runs-on: ubuntu-latest
     # Supplies CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
     environment: cloudflare-main
