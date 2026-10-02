@@ -18,8 +18,7 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # Supplies CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID, both written and
-    # rotated by .github/workflows/rotate_cloudflare_token.yaml.
+    # Supplies CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
     environment: cloudflare-pages
     steps:
       - uses: actions/checkout@v4
