@@ -1,9 +1,8 @@
 # Deliberately a direct-upload project: there is no `source` block, so
 # Cloudflare does not watch the repository. GitHub Actions owns the deploy
 # trigger (.github/workflows/on_push_main.yaml) and uploads ./site/ with
-# wrangler, authenticating with the rotating token issued by iac/deploy_token.
-# Adding a `source` block here would move the trigger to Cloudflare's Git
-# integration and leave that token unused.
+# wrangler. 
+
 resource "cloudflare_pages_project" "site" {
   account_id = var.cloudflare_account_id
   name       = var.project_name
