@@ -75,41 +75,67 @@
 			<main>
 				<!-- Page context -->
 				<h1>Members</h1>
-				<section>
-					This page includes information useful for current or prospective members of the
-					club. If you have any queries that aren't answered by this page, please feel
-					free to reach out to any committe memeber via whatsapp or asking in the main 
-					whatsapp chat where appropriate..
-				</section>
+				<!--
+					Text with a photo to its right on desktop, stacked on mobile — the
+					.media-split component from Join Us and Contact Us (components.css),
+					flipped by .media-split-reverse.
 
-				<h2>Useful links</h2>
-				Here are some links that might be useful:
-				<ul>
-					<li>
-					<a href="https://services.thebmc.co.uk/modules/rad/"> BMC Regional Access Database (RAD)</a> - One of the best ways to find out about bird restrictions in at crags!
-					</li>
-					<li>
-					<a href="https://www.pembrokeshirecoast.wales/things-to-do/outdoor-activities/climbing/"> Pembrokeshire National Park's information for climbers</a> - Some useful maps detailing climbing restrictions in local areas.
-					</li>
-					<li>
-					<a href="https://thebmc.co.uk/en/range-west">BMC information for castle martin range west</a> - This provides details of the access arangements for the range west area of the castle martin range (breifing dates).
-					</li>
-					<li>
-					<a href="https://www.gov.uk/government/publications/castlemartin-firing-notice--2"> Castlemartin Firing Notices</a> - The firing notices for the ranges, often useful to look at before heading to ranges along with the access infromation above.
-					</li>
-					<li>
-					<a href="https://thebmc.co.uk/en/incident-reporting">BMC Near Incident and Near Miss reports</a> - A really useful resource where people have reported near misses or incidents.
-					</li>
-				</ul>
+					The photo is last in the source here too, so the mobile stack keeps
+					reading order (intro, text, then photo). Both classes are needed: the
+					base class supplies the grid, the modifier moves the photo across.
 
-				<h2>Documents</h2>
-				<section>
-				Here are documents useful for participating in the club:
-				<ul>
-					<li>Club Constitution - to be uploaded soon.</li>
-					<li>Privacy Policy - this details how the club handles information you provide us.</li>
-				</ul>
-				</section>
+					The intro is a .media-split-lead, so it spans the full width of the
+					band above the text and photo instead of sitting beside the photo.
+				-->
+				<div class="media-split media-split-reverse">
+					<section class="media-split-lead">
+						This page includes information useful for current or prospective members of the
+						club. If you have any queries that aren't answered by this page, please feel
+						free to reach out to any committe memeber via whatsapp or asking in the main
+						whatsapp chat where appropriate..
+					</section>
+
+					<div class="media-split-text">
+						<h2>Useful links</h2>
+						Here are some links that might be useful:
+						<ul>
+							<li>
+							<a href="https://services.thebmc.co.uk/modules/rad/"> BMC Regional Access Database (RAD)</a> - One of the best ways to find out about bird restrictions in at crags!
+							</li>
+							<li>
+							<a href="https://www.pembrokeshirecoast.wales/things-to-do/outdoor-activities/climbing/"> Pembrokeshire National Park's information for climbers</a> - Some useful maps detailing climbing restrictions in local areas.
+							</li>
+							<li>
+							<a href="https://thebmc.co.uk/en/range-west">BMC information for castle martin range west</a> - This provides details of the access arangements for the range west area of the castle martin range (breifing dates).
+							</li>
+							<li>
+							<a href="https://www.gov.uk/government/publications/castlemartin-firing-notice--2"> Castlemartin Firing Notices</a> - The firing notices for the ranges, often useful to look at before heading to ranges along with the access infromation above.
+							</li>
+							<li>
+							<a href="https://thebmc.co.uk/en/incident-reporting">BMC Near Incident and Near Miss reports</a> - A really useful resource where people have reported near misses or incidents.
+							</li>
+						</ul>
+
+						<h2>Documents</h2>
+						<section>
+						Here are documents useful for participating in the club:
+						<ul>
+							<li>Club Constitution - to be uploaded soon.</li>
+							<li>Privacy Policy - this details how the club handles information you provide us.</li>
+						</ul>
+						</section>
+					</div>
+
+					<!--
+						width/height are the file's intrinsic pixel size (1500x2000), not a
+						request to render at that size - CSS overrides both. They give the
+						browser the aspect ratio up front so the column does not reflow once
+						the photo loads.
+					-->
+					<img src="images/organpipes_climber.jpg" width="1500" height="2000"
+						alt="A climber climbing a dramatic cliff at organs pipes north pembrokeshire."
+						class="media-split-image">
+				</div>
 				
 			</main>
 		</div>

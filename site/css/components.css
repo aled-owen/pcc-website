@@ -141,6 +141,50 @@
 }
 
 /*
+	Modifier: photo on the RIGHT. Used alongside .media-split, not instead of
+	it — the base class still supplies the grid, and is what the content width
+	rules in layout.css look for.
+
+	The photo is already last in the source, so with the explicit placements
+	above released, auto-placement alone puts the prose in the first track and
+	the photo in the second.
+
+	Both rules are deliberately single-class (0,1,0) so the mobile stack in
+	responsive.css still overrides them by load order. Qualifying them as
+	`.media-split.media-split-reverse`, or pinning the photo with
+	`.media-split-reverse .media-split-image`, would outrank it and leave a
+	second column on a phone. The `> *` reset beats the placements above only
+	because it comes after them, so keep it below them.
+*/
+.media-split-reverse {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+}
+
+.media-split-reverse > * {
+	grid-column: auto;
+	grid-row: auto;
+}
+
+/*
+	Optional lead-in that runs across BOTH columns above the text and photo,
+	rather than squeezing into the text column beside the photo. Put it first
+	in the .media-split so it takes the top row; the text and photo then
+	auto-place into the row beneath it. On mobile there is only one column, so
+	`1 / -1` spans just that and the lead simply stacks first.
+
+	Only works with .media-split-reverse: the base variant pins its text and
+	photo to row 1, which would push the lead below them. Must come after the
+	`> *` reset above, which it overrides by source order alone.
+
+	Being inside the .media-split, it is not a direct child of `main`, so the
+	60ch text measure in layout.css does not apply — it runs the full width of
+	the band by design.
+*/
+.media-split-lead {
+	grid-column: 1 / -1;
+}
+
+/*
 	Row of social links on the Contact Us page.
 
 	list-style/padding are cleared because the <ul> is here for its semantics
