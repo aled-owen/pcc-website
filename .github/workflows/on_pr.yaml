@@ -23,10 +23,10 @@ jobs:
     environment: cloudflare-pr
     steps:
       - uses: actions/checkout@v7
-	with:
-	  ref: refs/pull/${{ github.event.pull_request.number }}/merge
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
           persist-credentials: false
-	  allow-unsafe-pr-checkout: true
+          allow-unsafe-pr-checkout: true
 
       - uses: ./.github/actions/publish-to-cloudflare-pages
         with:
